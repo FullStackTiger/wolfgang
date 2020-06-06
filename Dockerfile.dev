@@ -1,0 +1,40 @@
+FROM python:3.6
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash -
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+RUN apt-get update && apt-get -y install nodejs yarn mysql-client
+
+# Copy app files
+RUN mkdir /app
+WORKDIR /app
+COPY . /app
+
+# Set-up app
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements/dev.txt
+
+ENV FLASK_PORT=5666
+ENV FLASK_ENV="docker"
+ENV FLASK_APP=autoapp.py
+ENV FLASK_DEBUG=1
+
+ENV WOLFGANG_SECRET="dev-secret"
+ENV WOLFGANG_REST_SERVER="localhost:$FLASK_PORT"
+# Allow CORS for development:
+ENV WOLFGANG_CORS=1
+
+# Client setup
+ENV HOST 0.0.0.0
+
+
+CMD ["bash", "./scripts/run_dev.sh"]
+
+EXPOSE $FLASK_PORT
+EXPOSE 2992

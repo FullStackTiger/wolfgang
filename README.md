@@ -1,2 +1,6 @@
-# wolfgang
-Flask & Vue.
+
+# Wolfgang
+
+> Wolfgang application
+
+Flask & Vue

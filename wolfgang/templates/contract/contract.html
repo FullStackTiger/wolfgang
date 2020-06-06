@@ -1,0 +1,388 @@
+{% extends "/layout.html" %}
+
+{% block page_title %}Contract ID WOL-{{ cruise.id }}{% endblock %}
+
+{% block css %}
+  <!-- <link rel=stylesheet type=text/css href="{{ url_for('static', filename='app/css/contract.css') }}"> -->
+  <style>
+   .missing {
+      background-color: yellow;
+      font-weight: bold;
+      padding: 2px;
+      border: 1px solid white;
+      margin: 1px;
+   }
+
+   ol.par {
+      counter-reset: item;
+      list-style-type: none;
+   }
+
+   ol.par li:before {
+      content: '§.' counter(item, decimal) '- ';
+      counter-increment: item;
+   }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid contract">
+  <div class="title">
+    <h1>Maritime Cruise Agreement onboard a Yacht</h1>
+    <h2 class="text-center">Special Terms</h2>
+  </div>
+  <span class="info">Agreement Number:</span> {{ '%05d' % cruise.id }}
+
+  <p class="contract-intro"><strong>By and between,</strong></p>
+  <ul>
+    <li><strong>the Carrier, party of the first part:</strong>
+      {% for carrier in cruise.carriers %}
+        {% if carrier.is_company == True %}
+          <ul class="list-unstyled">
+            <li>Company name: {{ carrier.company_name }}</li>
+            <li>Registered in: {{ carrier.company_reg_country }}</li>
+            <li>Having its registered office at: {{ carrier.company_reg_address }}</li>
+            <li>under the number: {{ carrier.company_reg_num }}</li>
+            <li>Intra-community VAT number: {{ carrier.company_vat_num }}</li>
+            <li>Represented for the purpose hereof by: {{ carrier.first_name }} {{ carrier.last_name }}</li>
+            <li>acting in his capacity as: {{ carrier.capacity }}</li>
+            <li>Duly authorised to that end;</li>
+          </ul>
+        {% else %}
+        <ul>
+          <li>Ms and/or Mr: {{ carrier.first_name }} {{ carrier.last_name }}</li>
+          <li>a citizen of {{ carrier.passport_country }};</li>
+          <li>of: {{ carrier.address }}</li>
+        </ul>
+        {% endif %}
+      {% endfor %}<br>
+
+      Owner of the following vessel: {{ yacht.name }}<br>
+    </li>
+
+    <li><strong>and the Client{{ cruise.clients|s_if_many }}, party of the second part:</strong>
+      {% for client in cruise.clients %}
+        {% if client.is_company == True %}
+          <ul class="list-unstyled">
+            <li>Company name: {{ client.company_name }}</li>
+            <li>Registered in: {{ client.company_reg_country }}</li>
+            <li>Having its registered office at: {{ client.company_reg_address }}</li>
+            <li>under the number: {{ client.company_reg_num }}</li>
+            <li>Intra-community VAT number: {{ client.company_vat_num }}</li>
+            <li>Represented for the purpose hereof by: {{ client.first_name }} {{ client.last_name }}</li>
+            <li>acting in his capacity as: {{ client.capacity }}</li>
+            <li>Duly authorised to that end;</li>
+          </ul>
+        {% else %}
+          <ul>
+            <li>Ms and/or Mr: {{ client.first_name }} {{ client.last_name }}</li>
+            <li>a {{ client.passport_country }};</li>
+            <li>of: {{ client.address }}</li>
+          </ul>
+        {% endif %}
+      {% endfor %}
+    </li>
+  </ul>
+
+  <p>(Hereinafter collectively the "Parties" and individually a "Party")</p><br>
+
+  <p><strong>in the presence of the Broker{{ cruise.brokers|s_if_many }},</strong>
+  {% for broker in cruise.brokers %}
+  <ul class="list-unstyled">
+    <li>Company name: {{ broker.company_name }}</li>
+    <li>Registered in: {{ broker.company_reg_country }}</li>
+    <li>Having its registered office at: {{ broker.company_reg_address }}</li>
+    <li>under the number: {{ broker.company_reg_num }}</li>
+    <li>Intra-community VAT number: {{ broker.company_vat_num }}</li>
+    <li>Holder of travel agent licence number:{{ broker.travel_agent_id }}</li>
+    <li>Secured by a financial guarantee of:{{ broker.financial_guarantee }}</li>
+    <li>Guarantor's name:{{ broker.financial_guarantee }}</li>
+    <li>Covered by civil professionnal insurance policy number:{{ broker.company_insurance_pol }}</li>
+    <li>Executed with (insurer name):{{ broker.company_insurance_name }}</li>
+    <li>Affiliated with (federation's and/or association's name):{{ broker.company_affil }}</li>
+    <li>under the number:{{ broker.company_affil_num }}</li>
+    <li>Represented for the purpose hereof by: {{ broker.first_name }} {{ broker.last_name|upper }}</li>
+    <li>acting in his capacity as: {{ broker.capacity }}</li>
+    <li>Duly authorised to that end;</li>
+  </ul>
+  {% endfor %}</p>
+
+  {% for stakeholder in cruise.stakeholders %}
+  <p><strong>and/or in the presence of the Broker/Escrow Agent</strong> (stakeholder),
+  <ul class="list-unstyled">
+    <li>Company name: {{ stakeholder.company_name }}</li>
+    <li>Registered in: {{ stakeholder.company_reg_country }}</li>
+    <li>Having its registered office at: {{ stakeholder.company_reg_address }}</li>
+    <li>under the number: {{ stakeholder.company_reg_num }}</li>
+    <li>Intra-community VAT number: {{ stakeholder.company_vat_num }}</li>
+    <li>Holder of travel agent licence number:{{ stakeholder.travel_agent_id }}</li>
+    <li>Secured by a financial guarantee of:{{ stakeholder.financial_guarantee }}</li>
+    <li>Guarantor's name:{{ stakeholder.financial_guarantee }}</li>
+    <li>Covered by civil professionnal insurance policy number:{{ stakeholder.company_insurance_pol }}</li>
+    <li>Executed with (insurer name):{{ stakeholder.company_insurance_name }}</li>
+    <li>Affiliated with (federation's and/or association's name):{{ stakeholder.company_affil }}</li>
+    <li>under the number:{{ stakeholder.company_affil_num }}</li>
+    <li>Represented for the purpose hereof by: {{ stakeholder.first_name }} {{ stakeholder.last_name|upper }}</li>
+    <li>acting in his capacity as: {{ stakeholder.capacity }}</li>
+    <li>Duly authorised to that end;</li>
+  </ul>
+  {% endfor %}
+  </p>
+
+  <p><strong>Whereas:</strong><br>
+  The Client has wished to complete a cruise onboard a Yacht. After exchanges with the Broker aimed at the selection of the vessel, the organisation of the maritime cruise (trip, calls, cruise periods) and the determination of any associated services, where applicable, the Client has agreed to execute, through the Broker, acting in the name and on behalf of the Carrier identified above, this maritime cruise agreement.</p>
+
+  <strong>Now therefore, it has been agreed as follows:</strong><br><br>
+
+  <h1 class="text-center">SPECIAL TERMS</h1><br>
+
+  <h2>ARTICLE 1 - INFORMATION CONCERNING THE VESSEL</h2><br>
+  <ul>
+    <li>Vessel's Name: {{ yacht.name }}</li>
+    <li>Type: {{ yacht.type.value }}</li>
+    <li>Status: ??</li>
+    <li>Flag: {{ yacht.flag }}</li>
+    <li>Length: {{ yacht.loa }}</li>
+    <li>IMO number: {{ yacht.imo_nb }}</li>
+    <li>Port of Registration: {{ yacht.port_of_registry_id }}</li>
+    <li>Registration number: {{ yacht.official_num }}</li>
+   </ul>
+  Description of the Vessel and the related equipment : Exhibit 1<br><br>
+
+  {% set start = waypoints[0] %}
+  {% set end = waypoints[-1] %}
+
+  <h2>ARTICLE 2 - INFORMATION CONCERNING THE CRUISE</h2></br>
+  Positioning of the vessel:<br>
+
+
+  Toward the Port of Embarkation, from: {{ start.arr_date|format_datetime('short') }} to: {{ start.dep_date|format_datetime('short') }}<br>
+  Return from the Port of Disembarkation, from: {{ end.arr_date|format_datetime('short') }} to: {{ end.dep_date|format_datetime('short') }}<br>
+  Cruise period: <br>
+  from: {{ start.dep_date }}<br>
+  until: {{ end.arr_date }}<br>
+  Journey:<br>
+  Embarkation on the vessel at the port of: {{ start.call_location }} at {{ start.dep_date|format_datetime('short') }}hour.<br>
+  Disembarkation from the vessel at the port of: {{ end.call_location }} at {{ end.arr_date|format_datetime('short') }}hour.<br>
+  Cruise area: {{ cruise.cruise_areas }} <br>
+  Scheduled stopovers:<br>
+  <ol>
+  {% for w in waypoints %}
+     <li><span class="time">{{ w.dep_date|format_datetime('short') }}</span> -
+        {% if w.call_location %}
+           {{ w.call_location }}
+        {% endif %}
+        [lat/lon: {{ w.latitude|round(3) }}, {{ w.longitude|round(3) }}]
+     </li>
+  {% endfor %}
+  </ol>
+  The cruise ticket and where applicable the vounchers corresponding, for each stopover, to any on-land services shall form jointly a cruise book and shall be delivered before embarkation.<br><br>
+
+  <h2>ARTICLE 3 - INFORMATION CONCERNING THE PASSENGERS</h2></br>
+  <h3>3.1 Number of passengers</h3>
+  Number of Passengers with berth (maximum of 12): {% if yacht %} {{ yacht.nb_berth }} {% endif %}</br>
+  Max number of navigating Passengers (maximum of 12): {% if yacht %} {{ yacht.max_nb_passengers }} {% endif %}</br><br>
+
+  <h3>3.2 List and identity of the Client and the Passengers</h3>
+  <p>If the list is incomplete on the date that the agreement is signed, an amendment with an exhaustive list of the Passengers must imperatively be provided, before boarding, to the Carrier or to the shipmaster acting as its representative.</p><br>
+
+  <ul>
+  {% for p in cruise.r_passengers %}
+    <p>1/ SURNAME, Given name: {{ p.profile.last_name }}{{ p.profile.first_name }} <br>
+    Birth date: {{ p.profile.date_of_birth|format_date  }}<br>
+    Nationality: {{ p.profile.passport_country }}<br>
+    Address: {{ p.profile.address }}<br>
+    Date of boarding onboard the vessel*: {% if p.embarkation %} {{ p.embarkation.waypoint.arr_date }} {% endif %} at the port of: {% if p.embarkation %} {{ p.embarkation.waypoint.call_location }} {% endif %} at {% if p.embarkation %} {{ p.embarkation.waypoint.arr_date }} {% endif %} hour.<br>
+    Date of disembarking from the vessel*: {% if p.disembarkation %} {{ p.disembarkation.waypoint.dep_date }} {% endif %} at the port of: {% if p.disembarkation %} {{ p.disembarkation.waypoint.call_location }} {% endif %} at {% if p.disembarkation %} {{ p.disemb.waypoint.arr_date }} {% endif %} hour.<br>
+    *(if different from the dates and places stated in Article 2 - Information related to the cruise)<br></p>
+  {% endfor %}
+  </ul>
+
+  <h3>3.3 Computing and Civil Liberties</h3><br>
+  <p>In accordance with the Act No. 78-17 of the 6th of January 1978 regarding computing and civil liberties, the Client shall have an access, correction and deletion right of any such nominative data and information concerning him that the Carrier or the Broker(s) may have to collect for the purpose of their operations.</p>
+
+  <h2>ARTICLE 4 - FINANCIAL TERMS</h2><br>
+
+  <h3>4.1 The Cruise Agreement Price includes the following:</h3>
+  <p>The Cruise, as defined in Article 2, including:<br>
+    <ul>
+      <li>The presence of a highly qualified crew;</li>
+      <li>The oil products necessary for the operation of the Vessel for the routing toward the Port of Embarkation, for the routing return from the Port of Disembarkation and for the Journey and foreseen Cruise Period.
+      <ol style="list-style-type: lower-alpha">
+        <li>
+          Estimation of consumption for the towards and return routing of the Vessel is: {{ cruise.fuel_price.quantity_routing }} litres of fuel.
+        </li>
+        <li>
+          Estimation of consumption for the Journey and foreseen cruise period is: {{ cruise.fuel_price.quantity_cruising }} litres of fuel.
+        </li>
+        <li>
+          Estimation of total consumption for the service provision is (a+b): {{ cruise.fuel_price.quantity_routing + cruise.fuel_price.quantity_cruising }} litres of fuel.
+        </li>
+      </ol>
+      The fuel price taken into account for the above consumption estimates is € {{ cruise.fuel_price.base_price }} not including taxes per litre. This price can be subject to adjustment under the terms set forth in article L211-12 of the French Toursim Code or in amendment to the Cruise Agreement in case of Journey modification at the request of the Client;</li>
+      <li>A catering service, excluding foodstuffs and drinks;</li>
+      <li>Nautical activities (except for scuba diving) when authorised by local authorities and confirmed by the shipmaster, capable of being completed with the watercraft and equipment available on board (see Exhibit 1) and with sea and safety conditions permitting;</li>
+      <li>Cost incurred by the positioning of the vessel.</li>
+    </ul>
+  </p>
+  The cruise price applies to all Passengers.<br><br>
+
+  <h3>4.2 The Cruise Agreement Price does not include:</h3><br>
+  <p>
+    <ul>
+      <li>Any incidental services not mentioned above under 4.1 and in particular taxes and duties related to port services, safety, the environment, access to national parks, disembarkation in special and/or protected areas and/or in areas subject to specific authorisation from national and/or local authorities (subject to change), etc.</li>
+      <li>Cost and expenses not mentioned above under 4.1 and, in particular costs incurred by any modification of the route or of the number of Passengers, such as the cost of fuel products and other expenses related, because of their very nature, to the cruise cost that would require an amendment.</li>
+      <li>Any client expense related to services separate from transportation giving rise to separate invoicing and in particular:
+        <ul>
+          <li>supplies of foodstuff and beverages (and in particular alcoholic beverages) to be made in response to specific requests made by the Client or any Passengers;</li>
+          <li>laudering services for the passenger's personnal belongings;</li>
+          <li>expenses related to communication services (fax, landline telephone, cellular or satellite telephone, emails, internet, etc.supplied through a subscription executed by the Vessel), according to rates applicable on board;</li>
+          <li>events specially organised at the request of the Client or the Passengers.</li>
+        </ul></li>
+      <li>Expenses possibly incurred in the name and on behalf of the Client and the Passengers and in particular:
+        <ul>
+          <li>land excursions and any pre- or post-cruises activities;</li>
+          <li>transfers and supply of land services;</li>
+          <li>any services supplied on demand (hair salon, beauty treatments, etc.);</li>
+          <li>health expenses (medical consultation, treatment, medicines delivered onboard or on land);</li>
+          <li>luggage transfer at airports.</li>
+        </ul></li>
+      <li>Expenditures for which the Client or the Passengers shall be personnally responsible, and in particular:
+        <ul>
+          <li>personnal expenditures, any gratuities, including gratuities paid to the crew;</li>
+          <li>expenses related to any formalities related to visas and health procedures;</li>
+          <li>insurance policies covering any risk of cancellation, assistance, repatriation, luggage, medical expenses and specific risks.</li>
+        </ul></li>
+    </ul>
+  </p>
+
+  <p><h3 style="display: inline">4.3</h3> By making any downpayment in relation to the reservation of the cruise, the Client fully accepts the special and standard terms of sale, which are necessary know and accepted by him upon the signature of the present Agreement. After full payment of the cruise, the Client will receive a travel booklet with the cruise tickets (the Cruise Agreement, its amendments and other possible vouchers are considered cruise tickets).</p><br>
+
+  <breakpage></breakpage>
+
+  <h3>4.4 Cruise Contract Price</h3>
+    <ol class="par">
+      <li>
+        Base Cruise Price as defined in article 4.1, not including VAT, and any oil products : €
+      {{ cruise.base_price_cruising or 0 }}</li>
+      <li>
+        Cost incurred by the positioning of the Vessel as defined in Article 4.1, not including VAT, and any oil products: € {{ cruise.base_price_routing or 0}}</li>
+      <li>
+        Oil products* price taken into account for the Cruise Agreement, not including taxes:
+        {{ cruise.fuel_price.quantity_cruising  + cruise.fuel_price.quantity_routing }}
+       litres x €{{ cruise.fuel_price.base_price_litre }}
+      /litre = €{{ cruise.fuel_price.base_price }}
+      </li>
+      <li>
+        Cruise Agreement Price, not including taxes (1+2+3): € {{ cruise.price_agreement }}
+        <br><small>Determination of the taxable amount for the calculation of the Value Added Tax (VAT) base in point 3 of Exhibit 3 - Tax regime applicable.</small></li>
+      <li>
+        (§.4 Price / Total distance of Journey)xTotal distance in national waters: €
+      {{ cruise.price_prorata_nw or 0 }}</li>
+      <li>
+        §.6- Value Added Tax (VAT): %{{ cruise.vat_rate1 }}</li>
+      <li>
+        §.7- Amount of VAT: €{{ cruise.vat_amount or 0 }}</li>
+      <li>
+        §.8- Price inclusive of VAT due under the Cruise Agreement: € {{ cruise.price_agreement_vat_inc or 0 }} i.e. a price per passenger equal to: € {{ cruise.price_agreement_pass_vat_inc or 0 }}</li>
+      <li>
+        Down payment upon booking: € {{ cruise.payment_down_p1_amount }} to be paid on the execution date thereof</li>
+      <li>
+        Booking down payment: € {{ cruise.payment_down_p2_amount }} to be paid before: {{ cruise.payment_down_p2_datedue }}</li>
+      <li>
+        Client Expense Advance**: € {{ cruise.payment_cea_amount }} to be paid before: {{ cruise.payment_cea_datedue }}</li>
+      <li>
+        Booking Balance: € {{ cruise.payment_bal_amount }} to be paid before: {{ cruise.payment_bal_datedue }}</li>
+      <li>
+        {% for stakeholder in cruise.stakeholders %}
+          <ul class="list-unstyled">
+            <li>
+              Holder's or Broker/Escrow Agent account: {{ stakeholder.account_name }}</li>
+            <li>
+              Banking institution to which the funds are transferred:{{ stakeholder.bank_name }}, {{ stakeholder.bank_country}}</li>
+            <li>
+              Bank account's IBAN number:
+              {% if stakeholder.iban %}
+                {{ stakeholder.iban }}
+              {% else %}
+                {{ stakeholder.account_num }}
+              {% endif %}
+              BIC: {{ stakeholder.swiftbic }}</li>
+          </ul>
+        {% endfor %}
+      </li>
+    </ol><br>
+
+*(see Article 13 of general terms) **(not included in the price due under the cruise agreement)<br>
+
+
+
+<h6>4.5 Payment of the price / Escrow arrangements</h6> <br>
+
+<p>Any and all funds received by the Broker(s) under this Agreement shall be transferred immediately upon receipt to the Escrow Agent and shall be held by the Escrow Agent in the currency of this Agreement.<br>
+Fifty percent (50%) of the ammount of the Price inclusive of VAT due in respect of the Cruise under this Agreement shall be paid to the Carrier by the Escrow Agent (after deducting the full amount of the commission due to the Broker(s)) by bank transfer on the commencement date os the Cruise Period or on the first immediately following business day.<br></p>
+
+<p>The Client Expense Advance shall be paid by the Escrow Agent, by bank  transfer, prior to embarkation. Such payment may be made at an earlier date, according to the Vessel's schedule and the local banking facilities. The Client Expense Advance shall be delivered to the shipmaster or to the Carrier, which shall then be responsible for forwarding it to the shipmaster.</p>
+
+<p>The ballance of the price due under this Agreement shall be paid to the Carrier immediately upon the first business day following the end of the Cruise Period.</p>
+
+<p>The Client shall determine at his own discretion the amount of any and all gratuities to be paid to the crew, in accordance with prevailing practices.</p>
+
+  <h2>ARTICLE 5 - OTHER SPECIAL TERMS</h2> <br>
+
+  <p>The Client, acting on his own behalf and on behalf of all Passengers, acknowledges that the pre-contractual information document referred to in the French Tourism Code, consisting in this draft agreement and the Exhibits hereto, was delivered.</p><br>
+
+  <p>The Client agrees to procure each Passenger's compliance with the Standard Term applicable to him.</p><br>
+
+  Other special terms:<br><br>
+  {% if cruise.special_conditions %}
+  <ul>
+    {% for cd in cruise.special_conditions %}
+      <li>{{ cd.name }} (Price: {{ cd.price }})</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <breakpage></breakpage>
+
+
+  <h2>SIGNATURES</h2> <br>
+
+  <p>The Carrier and the Client agree that the Standard Terms (article 1 to 19 inclusives) attached hereto form an integral part of this agreement, which is comprised of 18 pages, including the above Special Terms and the Exhibit hereto. By executing this Agreement, the Client acknowledges that he has reviewed all of the information required by the Tourism Code and by applicable transportation regulations.</p><br>
+  Made in a number of original copies equal to the number of Parties to this Agreement:<br>
+  <ul>
+  <li>Exhibit 1 : Data sheet describing the Vessel and its Equipment.</li>
+  <li>Exhibit 2 : Covered risks and amount of the guarantees.</li>
+  <li>Exhibit 3 : Tax regime.</li>
+  </ul>
+  The Client:<br>
+  In the name and on behalf of:<br>
+  Signatory's name:<br>
+  On*:<br>
+  Signature:<br>
+
+  The Carrier:<br>
+  In the name and on behalf of:<br>
+  Signatory's name:<br>
+  On*:<br>
+  Signature:<br>
+
+  *(This Agreement deemed executed on the latest of these two dates)<br>
+
+  In the Broker's presence:<br>
+  For and on behalf of:<br>
+  Signatory's name:<br>
+  On:<br>
+  Signature:<br>
+
+  And/or the Broker/Escrow Agent:<br>
+  For and on behalf of:<br>
+  Signatory's name:<br>
+  On:<br>
+  Signature:<br>
+
+</div>
+
+{% include 'contract/iframe-resizer.html' %}
+
+{% endblock %}

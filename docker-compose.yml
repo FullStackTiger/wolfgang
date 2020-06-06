@@ -1,0 +1,33 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+        - ./wolfgang:/app/wolfgang
+    ports:
+        - "5666:5666"
+        - "2992:2992"
+        - "8080:8080"
+    environment:
+      - WOLFGANG_FAKE_USER_TOKEN
+    depends_on:
+        - mysql
+    links:
+      - "mysql:wolfdb"
+  mysql:
+    image: mysql:5.7
+    restart: always
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
+    environment:
+        MYSQL_ROOT_PASSWORD: 'root_dev_password'
+        MYSQL_DATABASE: 'wolfgang'
+        MYSQL_USER: 'wolfgang_dev'
+        MYSQL_PASSWORD: 'wolfgang_dev_password'
+    ports:
+        - "3666:3306"
+    volumes:
+        - wolfgang-mysql-docker:/var/lib/mysql
+volumes:
+    wolfgang-mysql-docker:

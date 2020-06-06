@@ -1,2 +1,2 @@
 # wolfgang
-Flask & Vue
+Flask & Vue.

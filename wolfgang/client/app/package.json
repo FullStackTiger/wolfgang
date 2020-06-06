@@ -24,7 +24,7 @@
     "iframe-resizer": "^3.6.1",
     "jwt-decode": "^2.2.0",
     "localforage": "^1.7.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.13",
     "material-color-hash": "^0.1.4",
     "v-calendar": "^0.9.7",
     "vue": "^2.5.2",
